@@ -20,14 +20,14 @@ div.coin{
 }
 
 div#pacman{
-    background: url(assets/pacman-gif.gif);
+    background: url(assets/pacman-right.gif);
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
     width: 20px;
     height: 20px;
-    top: 8;
-    left:8;
+    top: 28;
+    left:28;
     position: absolute;
     
 }
