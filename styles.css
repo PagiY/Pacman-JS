@@ -1,7 +1,15 @@
 body{
     background-color: black;
 }
+
+div#container{
+  height: 100%;
+  width: 100%;
+
+}
+
 div.row div{
+
     width: 20px;
     height: 20px;
     display: inline-block;
@@ -32,6 +40,9 @@ div#pacman{
     
 }
 
+div.visited{
+    background-color: rgb(94, 43, 43);
+}
 div.empty{
-    background-color: black;
+    background-color: rgb(61, 61, 61);
 }
