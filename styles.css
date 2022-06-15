@@ -3,9 +3,8 @@ body{
 }
 
 div#container{
-  height: 100%;
-  width: 100%;
-
+    position: absolute;
+    left: 40%;
 }
 
 div.row div{
@@ -34,8 +33,6 @@ div#pacman{
     background-size: cover;
     width: 20px;
     height: 20px;
-    top: 28;
-    left:28;
     position: absolute;
     
 }
