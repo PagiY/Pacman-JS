@@ -53,9 +53,27 @@ function generateEmptyMaze(){
 }
 
 let world = generateEmptyMaze()
+// let world = [
+    
+//     [0,0,0,0,0,0,0,0,0,0],
+//     [0,0,0,0,0,0,0,0,0,0],
+//     [0,0,0,0,0,0,0,0,0,0],
+//     [0,0,2,0,0,0,0,0,0,0],
+//     [0,0,0,0,0,0,0,0,0,0],
+//     [0,0,0,0,0,0,0,0,0,0],
+// ]
+//    [2,2,2,2,2,2,2,2,2,2,2,2],
+//    [2,0,2,0,0,0,0,0,0,0,0,2],
+//    [2,0,2,0,0,0,0,0,0,0,0,2],
+//    [2,0,2,2,2,2,0,0,0,0,0,2],
+//    [2,0,0,0,0,0,0,0,0,0,0,2],
+//    [2,2,2,2,2,2,2,2,2,2,2,2]
+//] 
+
+//= generateEmptyMaze()
 
 function randomizedBFS(){
-
+    
     init_row = getRandomNumber(1, row - 2);
     init_col = getRandomNumber(1, col - 2);
 
@@ -74,7 +92,9 @@ function randomizedBFS(){
 
     
 }
-randomizedBFS()
+
+
+//randomizedBFS()
 
 //display the world
 function displayWorld(){
@@ -108,18 +128,66 @@ function displayWorld(){
     document.getElementById('world').innerHTML = output;
 
     const empty = document.getElementsByClassName("empty")
-
-    let rect = empty[0].getBoundingClientRect();
+    let index = getRandomNumber(0, empty.length - 1)
+    let rect = empty[index].getBoundingClientRect();
     pacman.x = rect.x
     pacman.y = rect.y
-    //for (let i = 0; i < empty.length; i++) {
-    //     let item = empty[i];
-    //    let rect = item.getBoundingClientRect()
-    //    pacman.x = rect.x
-    //    pacman.y = rect.y
-    //}
 
 }
+
+const bricks = document.getElementsByClassName("brick");
+
+function isColliding(object){
+    
+    if(object === 'brick'){
+        //loop through all bricks and compute 
+        for(let i = 0; i < bricks.length; i++){
+            let rect = bricks[i].getBoundingClientRect()
+
+            //i want to check their distances by logging
+            // console.log(`Pacman x: ${Math.trunc(pacman.x)}`)
+            // console.log(`rect.x - rect.width:${Math.trunc((rect.x - rect.width))}`)
+            // console.log(`rect.x + rect.width:${Math.trunc(rect.x + rect.width)}`)
+            // console.log('\n')
+            // console.log(`Pacman y: ${Math.trunc(pacman.y)}`)
+            // console.log(`rect.y - rect.height:${Math.trunc(rect.y - rect.height)}`)
+            // console.log(`rect.y + rect.height:${Math.trunc(rect.y + rect.height)}`)
+            // console.log('\n')
+
+            if (Math.trunc(pacman.x) > Math.trunc(rect.x - rect.width) && Math.trunc(pacman.x) < Math.trunc(rect.x + rect.width)
+            && (Math.trunc(pacman.y) > Math.trunc(rect.y - rect.height) && Math.trunc(pacman.y) < Math.trunc(rect.y + rect.height))){
+                //force pacman position? TODO: smoothen force position. Something to do with velocity
+                if(pacman.direction === 'right'){
+                    pacman.x = (rect.x - rect.width);
+                }
+                else if(pacman.direction === 'left'){
+                
+                    pacman.x = (rect.x + rect.width);
+                }
+                else if(pacman.direction ==='up'){
+                    pacman.y = (rect.y + rect.height); 
+                    
+                }
+                else if(pacman.direction === 'down'){
+                    pacman.y = (rect.y - rect.height);
+                }   
+                
+                return true;
+            }
+
+        }       
+
+        return false;
+    }
+
+    else if(object ==='coin'){
+
+    }
+    
+        
+}
+
+
 
 function displayPacman(){
 
@@ -128,39 +196,55 @@ function displayPacman(){
     document.getElementById("pacman").style.left = pacman.x + "px";
     document.getElementById("pacman").style.top  = pacman.y + "px";
 
+
 }
 
 displayWorld()
 displayPacman()
 
 //velocity; i think it should be speed?
-var velocity = 2;
+var velocity = 3;
 
 //user keys
 document.onkeydown = function(e){
     if(e.keyCode === 40){ //down
-        pacman.y = pacman.y + velocity;
-        pacman.direction = "down";
-        displayPacman();
+
+        if(!isColliding('brick')){
+            pacman.y = pacman.y + velocity;
+            pacman.direction = "down";
+        }
+        
     }
 
     else if(e.keyCode === 38){ //up
-        pacman.y = pacman.y - velocity;
-        pacman.direction = "up";
-        displayPacman();
+
+        if(!isColliding('brick')){
+            pacman.y = pacman.y - velocity;
+            pacman.direction = "up";
+        }
+
     }
 
     else if(e.keyCode === 39){ // right
 
-        pacman.x = pacman.x + velocity;
-        pacman.direction = "right";
-        displayPacman();
+        if(!isColliding('brick')){
+            pacman.x = pacman.x + velocity;
+            pacman.direction = "right";
+        }
+
     }
 
     else if(e.keyCode === 37){ //left
-        pacman.x = pacman.x - velocity;
-        pacman.direction = "left";
-        displayPacman();
+
+        if(!isColliding('brick')){
+            pacman.x = pacman.x - velocity;
+            pacman.direction = "left";
+        }
+
     }
 
+    displayPacman();
+
 }
+
+setInterval()
