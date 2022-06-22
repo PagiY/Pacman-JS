@@ -1,33 +1,67 @@
- import {gameobjects} from './gameobjects.js';
+import {gameobjects} from './gameobjects.js';
+
+let keys = {
+    'left'  : {pressed: false},
+    'up'    : {pressed: false},
+    'right' : {pressed: false},
+    'down'  : {pressed: false},
+    'currentkey': '',
+    'checkkey': '',
+    'nextkey': '',
+}
 
 class Controller {
     constructor() {
-       
+        
+    }
+    
+    updateKey(){
+        keys.currentkey = keys.nextkey;
+        
     }
 
-    move(e){
-        
+    keyPressTrue(e){
+
         switch(e.keyCode){
             case 38:
-                console.log('up');
-                gameobjects.pacman.y -= 2;
+                
+                keys.checkkey = 'up'
+                keys.up.pressed = true;
                 break;
             case 37:
-                console.log('left');
-                gameobjects.pacman.x -= 2;
+                keys.checkkey = 'left'
+                keys.left.pressed = true;
                 break;
             case 39:
-                console.log('right');
-                gameobjects.pacman.x += 2;
+                keys.checkkey = 'right'
+                keys.right.pressed = true;
                 break;
             case 40:
-                console.log('down');
-                gameobjects.pacman.y += 2;
+                keys.checkkey = 'down'
+                keys.down.pressed = true;
                 break;
-        }
+         }
+
+         gameobjects.pacman.updateStates();
       
+    }
+
+    keyPressFalse(e){
+        switch(e.keyCode){
+            case 38:
+                keys.up.pressed = false;
+                break;
+            case 37:
+                keys.left.pressed = false;
+                break;
+            case 39:
+                keys.right.pressed = false;
+                break;
+            case 40:
+                keys.down.pressed = false;
+                break;
+         } 
     }
 }
 
-
-export default {Controller};
+export {Controller, keys};
