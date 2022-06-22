@@ -1,2 +1,2 @@
 # Pacman-JS
-Pacman game using HTML, CSS, and Vanilla JS
+Pacman game using HTML5 Canvas and Javascript
