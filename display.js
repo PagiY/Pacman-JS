@@ -12,10 +12,7 @@ function initialize(){
         ctx = canvas.getContext("2d");
     }
     
-    createGameWorld();
-    populateCoins();
-    createCharacters();
-
+    initializeWorld();
 
     window.requestAnimationFrame(gameLoop);
 
@@ -36,8 +33,9 @@ let world = [
 ]
 
 
-function createGameWorld(){
+function initializeWorld(){
 
+    //get data from world array
     world.forEach((row, i) => {
         row.forEach((obj, j) => {
             if(obj === '1'){
@@ -50,41 +48,41 @@ function createGameWorld(){
         })
     })
     
+    //draw bricks
     gameobjects.bricksList.forEach((brick) => {
         brick.draw();
     })
-
+    //draw spaces
     gameobjects.spaceList.forEach((space) => {
         space.draw();
     })
 
-    
-}
-
-function createCharacters(){
-    
-    gameobjects.pacman = new Pacman(ctx, 20 + defaults.w / 2, 20 + defaults.h / 2)
-    gameobjects.pacman.draw();
-    
-    gameobjects.blinky = new Blinky(ctx, 40, 40)
-    gameobjects.blinky.draw();
-
-}
-
-function populateCoins(){
+    //add coins to spaces
     gameobjects.spaceList.forEach((space) => {
         gameobjects.coinsList.push(new Coin(ctx, space.x + defaults.w / 2, space.y + defaults.h / 2));
     })
 
+    //draw coins
     gameobjects.coinsList.forEach((coin) =>{
         coin.draw();
     })
 
-    console.log(gameobjects.coinsList)
+    //assign blinky to a random space
+    gameobjects.blinky = new Blinky(ctx, 60 , 120)
+    gameobjects.blinky.randomState();
+    gameobjects.blinky.draw();
+
+    //characters
+    gameobjects.pacman = new Pacman(ctx, 20 + defaults.w / 2, 20 + defaults.h / 2)
+    gameobjects.pacman.draw();
+
     
+
 }
 
-function gameLoop(){
+
+
+function gameLoop(timeStamp){
 
     
     ctx.clearRect(0,0,canvas.width, canvas.height);
@@ -103,7 +101,9 @@ function gameLoop(){
     })
 
     gameobjects.pacman.draw();
+    gameobjects.blinky.draw();
     gameobjects.pacman.update();
+    gameobjects.blinky.update();
 
     window.requestAnimationFrame(gameLoop);
 
