@@ -17,7 +17,9 @@ let directions = {
 let gameobjects = {
     bricksList: [],
     spaceList: [],
+    coinsList: [],
     pacman: null,
+    blinky: null,
 }
 
 class GameObject {
@@ -61,6 +63,35 @@ class Space extends GameObject {
 
 }
 
+class Coin extends GameObject{
+    constructor(ctx, x, y){
+        super(ctx, x, y);
+        this.r = 1.5;
+        this.accessible = true;
+    }
+
+    draw(){
+        if(this.accessible){
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
+            this.ctx.fillStyle = 'rgb(210,180,140)';
+            this.ctx.fill();
+            this.ctx.closePath();
+        }
+        else{
+            this.ctx.fillStyle = 'rgba(210,180,140, 0)';
+            this.ctx.fill();
+        }
+        
+
+    }
+
+    remove(){
+        this.accessible = false;
+    }
+
+}
+
 class Pacman extends GameObject{
     constructor(ctx, x, y){
         super(ctx, x, y);
@@ -87,14 +118,15 @@ class Pacman extends GameObject{
 
     update(){
        // console.log(directions)
-        console.log(this.states)
-        this.x += this.vx;
-        this.y += this.vy;
+       // console.log(this.states)
+        this.x += this.vx;                  //x velocity + xpos
+        this.y += this.vy;                  //y velocity + ypos
 
-        this.getCurSpace();
-        this.checkDirections();
-        this.executeMovementState();
-        this.checkNextMove();
+        this.getCurSpace();                 //get the current space pacman is currently in
+        this.checkDirections();             //check all four directions where pacman can move
+        this.executeMovementState();        //default movement state: moving to where this.states.moving is currently heading
+        this.checkNextMove();               //keep checking for next move and execute next move once a window for movement is available
+        this.checkCoins();                  //check for coins
 
     }
 
@@ -307,7 +339,43 @@ class Pacman extends GameObject{
         return false
     }
 
+    checkCoins(){
+        let distX;
+        let distY;
+        let dist;
+        let coin;
+        for(let i = 0; i < gameobjects.coinsList.length; i++){
+            coin = gameobjects.coinsList[i];
+            if(!coin.accessible){
+                continue;
+            }
+            distX = coin.x - this.x;
+            distY = coin.y - this.y;
+            
+            dist = Math.sqrt((distX * distX) + (distY * distY))
+            if(dist <= this.r){
+                coin.remove();
+            }
+        }
+
+        
+    }
+
 
 }
 
-export {Brick, Pacman, Space, gameobjects, defaults};
+class Blinky extends GameObject{
+    constructor(ctx, x, y){
+        super(ctx, x, y);
+        this.width = defaults.w;
+        this.height = defaults.h;
+    }
+
+    draw(){    
+        this.ctx.fillStyle = 'rgb(255, 0, 0)';
+        this.ctx.fillRect(this.x, this.y, this.width, this.height);
+        
+    }
+
+}
+export {Brick, Space, Coin, Pacman, Blinky, gameobjects, defaults};

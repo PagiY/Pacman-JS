@@ -1,6 +1,6 @@
 "use strict";
 
-import {Brick, Pacman, gameobjects, defaults, Space} from './gameobjects.js'
+import {Brick, Space, Coin, Pacman, Blinky, gameobjects, defaults} from './gameobjects.js'
 
 let canvas;
 let ctx;
@@ -13,27 +13,24 @@ function initialize(){
     }
     
     createGameWorld();
-    createPacman();
+    populateCoins();
+    createCharacters();
+
 
     window.requestAnimationFrame(gameLoop);
 
 }
 
-//30, 70, 110, 150, 190, ...
-//this.x - [30, 70, 110, 140, or 170]
-//compare and get smallest difference
-//the result with smallest difference is the new position 
-//
 let world = [
     ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
     ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1'],
-    ['1', '0', '1', '0', '1', '0', '1', '1', '0', '1', '1', '0', '1'],
-    ['1', '0', '0', '0', '1', '0', '1', '1', '0', '1', '1', '0', '1'],
-    ['1', '0', '1', '0', '1', '0', '1', '1', '0', '1', '1', '0', '1'],
-    ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '1'],
-    ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '1'],
+    ['1', '0', '1', '0', '1', '1', '1', '1', '1', '1', '1', '0', '1'],
+    ['1', '0', '0', '0', '1', '0', '0', '0', '0', '0', '1', '0', '1'],
+    ['1', '0', '1', '0', '1', '0', '0', '0', '0', '0', '1', '0', '1'],
+    ['1', '0', '0', '0', '1', '1', '1', '1', '1', '1', '1', '0', '1'],
     ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1'],
     ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '1'],
+    ['1', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '0', '1'],
     ['1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1'],
     ['1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1'],
 ]
@@ -54,34 +51,45 @@ function createGameWorld(){
     })
     
     gameobjects.bricksList.forEach((brick) => {
-        brick.draw()
+        brick.draw();
     })
 
     gameobjects.spaceList.forEach((space) => {
-        space.draw()
+        space.draw();
     })
 
     
 }
 
-function createPacman(){
+function createCharacters(){
     
     gameobjects.pacman = new Pacman(ctx, 20 + defaults.w / 2, 20 + defaults.h / 2)
     gameobjects.pacman.draw();
-    gameobjects.pacman.getCurSpace();
-    gameobjects.pacman.checkDirections();
+    
+    gameobjects.blinky = new Blinky(ctx, 40, 40)
+    gameobjects.blinky.draw();
 
+}
+
+function populateCoins(){
+    gameobjects.spaceList.forEach((space) => {
+        gameobjects.coinsList.push(new Coin(ctx, space.x + defaults.w / 2, space.y + defaults.h / 2));
+    })
+
+    gameobjects.coinsList.forEach((coin) =>{
+        coin.draw();
+    })
+
+    console.log(gameobjects.coinsList)
+    
 }
 
 function gameLoop(){
 
     
     ctx.clearRect(0,0,canvas.width, canvas.height);
-    gameobjects.pacman.draw();
-    gameobjects.pacman.update();
 
     gameobjects.bricksList.forEach((brick) => {
-        //gameobjects.pacman.detectCollision(brick)
         brick.draw()
 
     })
@@ -89,6 +97,13 @@ function gameLoop(){
     gameobjects.spaceList.forEach((space) => {
         space.draw()
     })
+
+    gameobjects.coinsList.forEach((coin) => {
+        coin.draw()
+    })
+
+    gameobjects.pacman.draw();
+    gameobjects.pacman.update();
 
     window.requestAnimationFrame(gameLoop);
 

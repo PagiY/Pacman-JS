@@ -9,7 +9,7 @@ class Controller {
         
     }
 
-    keyPressTrue(e){
+    keyPress(e){
 
         switch(e.keyCode){
             case 38:

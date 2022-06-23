@@ -11,11 +11,7 @@ const cont = new Controller();
 
 
 document.onkeydown = function(e){
-    cont.keyPressTrue(e)
-}
-
-document.onkeyup = function(e){
-    cont.keyPressFalse(e)
+    cont.keyPress(e)
 }
 
 window.onload = initialize();
