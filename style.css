@@ -1,0 +1,63 @@
+body{
+    background-color: black;
+    margin:0;
+    padding:0;
+}
+.container{
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    margin-left: 50px;
+    font-size: 0px;
+}
+
+.row div{
+ 
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    
+}
+
+.brick{
+    background-color: blue;
+    
+}
+
+.cherry{
+    background-image: url(assets/pacman-art/other/apple.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.coin{
+    /* background-color: brown; */
+    background-image: url(assets/pacman-art/other/dot.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+
+#pacman{
+    background: url(assets/pacman-right.gif);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    /*top: 20px;*/
+    /*bottom: 20px;*/
+}
+
+#blinky{
+    background: url(assets/pacman-art/ghosts/blinky.png);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    position: absolute;
+    width: 20px;
+    height: 20px;
+}
