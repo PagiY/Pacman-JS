@@ -41,6 +41,7 @@ let worlds = {
 
 let world = w;
 
+let score = 0;
 
 let pacman = {
     x: 1,
@@ -93,7 +94,7 @@ let ghosts = {
 let directions = ['up', 'down', 'left', 'right'];
 let keyPressed = 'right';
 
-
+//==== Display the world
 function displayWorld(){
 
     let output = "";
@@ -126,19 +127,52 @@ function displayWorld(){
         }
         
         output += "</div>";
+
     }
     
-
+    
     document.getElementById('world').innerHTML = output;
+
 }
 
-//initializations function call
+//==== Score display UI
+function displayScore(){
+    document.getElementById("score").innerHTML = score.toString();
+}
+
+//===== Display characters
+function displayPacman(){
+    //+ 50 for margin , could use better method...
+    document.getElementById("pacman").style.left = (pacman.x * 20) + "px";
+    document.getElementById("pacman").style.top = (pacman.y * 20) + "px";
+ 
+    document.getElementById("pacman").style.backgroundImage = "url(assets/pacman-" + keyPressed + ".gif)";
+
+}
+
+function displayGhost(ghost, name){
+    document.getElementById(name).style.left = (ghost.x * 20) + "px";
+    document.getElementById(name).style.top = (ghost.y * 20) + "px";
+    
+    if(ghost.status === "scared"){
+        document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/blue_ghost.png)";
+    }
+    else{
+        document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/" + name + ".png)";
+    }
+
+}
+
+
+
+//==== initializations function call
 displayWorld();
+displayScore();
 initGhosts();
 initPacmanPosition();
 
 
-//user keys and collision detection
+//==== User keys + prevention of player movement upon collision of a brick
 document.onkeydown = function(e){
 
     let checkX;
@@ -188,6 +222,8 @@ document.onkeydown = function(e){
                 pacman.y += pacman.v;
                 break;
         }
+
+        checkGhostsPosition();
         displayWorld();
         displayPacman();
     }
@@ -195,7 +231,7 @@ document.onkeydown = function(e){
 
 }
 
-//initialization functions
+//==== Initialization functions
 function initPacmanPosition(){
     let empties = document.getElementsByClassName("coin");
 
@@ -278,29 +314,7 @@ function initGhosts(){
     
 }
 
-function displayPacman(){
-    //+ 50 for margin , could use better method...
-    document.getElementById("pacman").style.left = (pacman.x * 20) + "px";
-    document.getElementById("pacman").style.top = (pacman.y * 20) + "px";
- 
-    document.getElementById("pacman").style.backgroundImage = "url(assets/pacman-" + keyPressed + ".gif)";
-
-}
-
-function displayGhost(ghost, name){
-    document.getElementById(name).style.left = (ghost.x * 20) + "px";
-    document.getElementById(name).style.top = (ghost.y * 20) + "px";
-    
-    if(ghost.status === "scared"){
-        document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/blue_ghost.png)";
-    }
-    else{
-        document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/" + name + ".png)";
-    }
-
-}
-
-//collision check
+//====== Collision check and other triggers such as score, and ghost status
 function checkCollision(checkX, checkY, isPacman){
 
     if(world[checkY][checkX] === 0){        //if space
@@ -312,21 +326,43 @@ function checkCollision(checkX, checkY, isPacman){
     else if(world[checkY][checkX] === 2){   //if coin
         if(isPacman){
             world[checkY][checkX] = 0;
+            score+=1;
+            displayScore();
         }
         return true;
     }
     else if(world[checkY][checkX] === 3){   //if cherry
         if(isPacman){
             world[checkY][checkX] = 0;
+            score+=20;
+            displayScore();
             triggerScaredStatus();
         }
         return true;
     }
-    
-    
 }
 
-//ghost movements
+//======= Pacman side ghost detection
+function checkGhostsPosition(){
+    checkPacmanPosition(ghosts.blinky);
+    checkPacmanPosition(ghosts.clyde);
+    checkPacmanPosition(ghosts.inky);
+    checkPacmanPosition(ghosts.pinky);
+}
+
+//======= Ghost side pacman detection
+function checkPacmanPosition(ghost){
+    if(ghost.x === pacman.x && ghost.y === pacman.y){
+        if(ghost.status!== 'normal'){
+            eatenState(ghost);
+        }
+        else{
+            console.log('game over');
+        }
+    }
+}
+
+//========= Ghost movements
 function moveGhost(ghost){
     switch(ghost.curDir){
         case 'up':
@@ -342,6 +378,8 @@ function moveGhost(ghost){
             ghost.y += ghost.v;
             break;
     }
+
+    checkPacmanPosition(ghost);
 }
 
 function randomValidDirection(ghost){
@@ -387,7 +425,7 @@ function randomValidDirection(ghost){
 function triggerScaredStatus(){
 
     let scaredTimer;
-
+    
     scaredStatus(ghosts.blinky, true);
     scaredStatus(ghosts.clyde, true);
     scaredStatus(ghosts.inky, true);
@@ -406,7 +444,7 @@ function triggerScaredStatus(){
 }
 
 
-//enemy states 
+//======== Enemy states and statuses
 function normalState(ghost){
     
     //scan  
@@ -454,6 +492,7 @@ function normalState(ghost){
     
     }
 }
+
 
 function chaseState(){
     //TODO: follow pacman only when within the same x or y 
@@ -521,15 +560,11 @@ function waitState(ghost){
     moveGhost(ghost)
 }   
 
-function toNormalState(){
-   
-}
-
 function moveOutofWaitState(ghost){
     //pathfind up to gate + y-1 then go back to normal
 }
 
-//enemy states controllers
+//======= Enemy states controllers
 function moveBlinky(){
     
     if(ghosts.blinky.state === 'normal'){
@@ -587,14 +622,12 @@ function movePinky(){
 }
 
 
-
+//===== Execute states within these intervals
 function intervalController(){
     setInterval(moveBlinky, ghosts.blinky.speed);
     setInterval(moveClyde,  ghosts.clyde.speed);
     setInterval(moveInky,   ghosts.inky.speed);
     setInterval(movePinky,  ghosts.pinky.speed);
-
-
 }
 
 intervalController();
