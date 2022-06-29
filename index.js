@@ -425,7 +425,9 @@ function randomValidDirection(ghost){
 function triggerScaredStatus(){
 
     let scaredTimer;
-    
+
+    clearInterval(scaredTimer);
+
     scaredStatus(ghosts.blinky, true);
     scaredStatus(ghosts.clyde, true);
     scaredStatus(ghosts.inky, true);
