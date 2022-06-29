@@ -9,7 +9,7 @@ let w = [
     [1,2,2,2,1,4,4,4,1,2,2,2,2,2,2,2,1],
     [1,2,2,2,1,4,4,4,1,2,2,2,2,2,2,2,1],
     [1,2,2,2,1,1,1,1,1,2,2,2,2,2,2,2,1],
-    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,3,2,2,2,1],
     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 
 ]
@@ -17,7 +17,9 @@ let w = [
 
 let worlds = {
     1 : [
-        []
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1]
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     ],
 
     2 : [
@@ -46,14 +48,18 @@ let pacman = {
     v: 1,
 }
 
+//states = [normal, wait, moveOut, eaten, chase];
+//status = [normal, scared];
+
 let ghosts = {
     blinky : {
         x: 1,
         y: 1,
         v: 1,
         speed: 1000,        
-        state: 'normal',    
-        curDir: ''         
+        state: 'normal',
+        status: 'normal' ,
+        curDir: '',         
     },
     clyde : {
         x: 1,
@@ -61,6 +67,7 @@ let ghosts = {
         v: 1,
         speed: 1000,
         state: 'wait',
+        status: 'normal',
         curDir: ''          
     },
     inky : {
@@ -68,7 +75,8 @@ let ghosts = {
         y: 1,
         v: 1,
         speed: 1000,
-        state: 'out',
+        state: 'wait',
+        status: 'normal',
         curDir: ''
     },
     pinky : {
@@ -77,6 +85,7 @@ let ghosts = {
         v: 1,
         speed: 1000,
         state: 'wait',
+        status: 'normal',
         curDir: ''
     }
 }
@@ -240,7 +249,7 @@ function initGhosts(){
             
             if(ghs[i].id === "inky"){
                 ghosts.inky.x = x;
-                ghosts.inky.y = y ;
+                ghosts.inky.y = y + 1;
                 ghs[i].style.top  = (ghosts.inky.y * 20) + "px";
                 ghosts.inky.curDir = 'down';
             }
@@ -258,17 +267,16 @@ function initGhosts(){
             }
             
             cage_counter+=1;
-
-            displayWorld();
+            
         }
         
     }
+    displayWorld();
 
     //set initial direction for blinky
     randomValidDirection(ghosts.blinky);
-
+    
 }
-
 
 function displayPacman(){
     //+ 50 for margin , could use better method...
@@ -283,7 +291,7 @@ function displayGhost(ghost, name){
     document.getElementById(name).style.left = (ghost.x * 20) + "px";
     document.getElementById(name).style.top = (ghost.y * 20) + "px";
     
-    if(ghost.state === "scared"){
+    if(ghost.status === "scared"){
         document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/blue_ghost.png)";
     }
     else{
@@ -310,9 +318,7 @@ function checkCollision(checkX, checkY, isPacman){
     else if(world[checkY][checkX] === 3){   //if cherry
         if(isPacman){
             world[checkY][checkX] = 0;
-            scaredState(ghosts.blinky, true);
-            scaredState(ghosts.clyde, true);
-
+            triggerScaredStatus();
         }
         return true;
     }
@@ -378,6 +384,28 @@ function randomValidDirection(ghost){
     }
 }
 
+function triggerScaredStatus(){
+
+    let scaredTimer;
+
+    scaredStatus(ghosts.blinky, true);
+    scaredStatus(ghosts.clyde, true);
+    scaredStatus(ghosts.inky, true);
+    scaredStatus(ghosts.pinky, true);
+
+
+    scaredTimer = setInterval(function(){
+        ghosts.blinky.status = "normal";
+        ghosts.inky.status = "normal";
+        ghosts.pinky.status = "normal";
+        ghosts.clyde.status = "normal";
+    
+        clearInterval(scaredTimer);
+    }, 15000)
+
+}
+
+
 //enemy states 
 function normalState(ghost){
     
@@ -428,10 +456,10 @@ function normalState(ghost){
 }
 
 function chaseState(){
-    //TODO: follow pacman?? A*??
+    //TODO: follow pacman only when within the same x or y 
 }
 
-function scaredState(ghost, transitioning){
+function scaredStatus(ghost, transitioning){
     //TODO: reverse direction and slow down movement while in this state
 
     if(transitioning){
@@ -442,7 +470,6 @@ function scaredState(ghost, transitioning){
             let checkY = ghost.y + 1;
             if(checkCollision(checkX, checkY, false)){
                 ghost.curDir = 'down';
-                moveGhost(ghost);
             }
         }
         else if(ghost.curDir === 'down'){
@@ -451,7 +478,6 @@ function scaredState(ghost, transitioning){
             let checkY = ghost.y - 1;
             if(checkCollision(checkX, checkY, false)){
                 ghost.curDir = 'up';
-                moveGhost(ghost);
             }
         }
         else if(ghost.curDir === 'right'){
@@ -460,7 +486,6 @@ function scaredState(ghost, transitioning){
             let checkY = ghost.y;
             if(checkCollision(checkX, checkY, false)){
                 ghost.curDir = 'left';
-                moveGhost(ghost);
             }
         }
         else if(ghost.curDir === 'left'){
@@ -469,7 +494,6 @@ function scaredState(ghost, transitioning){
             let checkY = ghost.y;
             if(checkCollision(checkX, checkY, false)){
                 ghost.curDir = 'right';
-                moveGhost(ghost);
             }
         }
         else{
@@ -478,16 +502,13 @@ function scaredState(ghost, transitioning){
         }
           
     }
-    else{
-        
-        normalState(ghost);
-    }
-    ghost.state = "scared";
+
+    ghost.status = "scared";
 
 }
 
-function returnState(){
-    //TODO: A* pathfinding
+function eatenState(){
+    //TODO: A* pathfinding: move fast back to cage
 }
 
 function waitState(ghost){
@@ -500,8 +521,12 @@ function waitState(ghost){
     moveGhost(ghost)
 }   
 
-function moveOutState(ghost){
-    console.log()
+function toNormalState(){
+   
+}
+
+function moveOutofWaitState(ghost){
+    //pathfind up to gate + y-1 then go back to normal
 }
 
 //enemy states controllers
@@ -511,11 +536,7 @@ function moveBlinky(){
         ghosts.blinky.speed = 500;
         normalState(ghosts.blinky);
     }
-    else if(ghosts.blinky.state === 'scared'){
-        ghosts.blinky.speed = 2000;
-        scaredState(ghosts.blinky, false);
-        
-    }
+
 
     displayGhost(ghosts.blinky, "blinky");
 }
@@ -529,39 +550,22 @@ function moveClyde(){
         ghosts.clyde.speed = 500;   //speed when in wait state
         waitState(ghosts.clyde);
     }
-    else if(ghosts.blinky.state === 'scared'){
-        ghosts.clyde.speed = 2000;
-        scaredState(ghosts.clyde, false);
-    }
+
+
     displayGhost(ghosts.clyde, "clyde");
     
 }
 
 function moveInky(){
     if(ghosts.inky.state === 'normal'){
-        ghosts.clyde.speed = 500;
+        ghosts.inky.speed = 500;
         normalState(ghosts.inky);
     }
     else if(ghosts.inky.state === 'wait'){
-        ghosts.clyde.speed = 500;
+        ghosts.inky.speed = 500;
         waitState(ghosts.inky);
     }
-    else if(ghosts.inky.state === 'out'){
-
-        //ghosts.inky.y -= 1;
-        // let cages = document.getElementsByClassName("cage");
-        //  for(let i = 0; i < cages.length; i++){
-            
-        //     let cage = cages[i].getBoundingClientRect();
-        //     let cageX = cage.x / 20;
-        //     let cageY = cage.y / 20;
-
-        //     if(cageX === ghosts.inky.x && cageY === ghosts.inky.y){
-        //         if(cageX < )
-        //     }
-        //  }
-        
-    }
+ 
 
     displayGhost(ghosts.inky, "inky");
 
@@ -576,6 +580,8 @@ function movePinky(){
         ghosts.clyde.speed = 500;
         waitState(ghosts.pinky);
     }
+
+
     displayGhost(ghosts.pinky, "pinky");
 
 }
@@ -588,9 +594,7 @@ function intervalController(){
     setInterval(moveInky,   ghosts.inky.speed);
     setInterval(movePinky,  ghosts.pinky.speed);
 
-    setInterval(function() {
-        
-    }, 10000)
+
 }
 
 intervalController();
