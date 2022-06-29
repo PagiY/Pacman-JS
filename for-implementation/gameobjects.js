@@ -447,6 +447,7 @@ class Blinky extends GameObject{
 
             if(this.checkCollisions(brick, 0)){
                 this.stop();
+                
                 break;
             }
             if(this.states.moving === 'up'){
@@ -479,7 +480,7 @@ class Blinky extends GameObject{
 
      //change current movement state to next state
     changeToNextMove(){
-        
+        this.randomState();
     }
 
     //rect and rect collisions
