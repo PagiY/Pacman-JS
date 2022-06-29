@@ -37,6 +37,9 @@ body{
     
 }
 
+.gate{
+    background-color: red;
+}
 
 #pacman{
     background: url(assets/pacman-right.gif) no-repeat center;
@@ -52,8 +55,14 @@ body{
 
 #clyde{
     background: url(assets/pacman-art/ghosts/clyde.png) no-repeat center;
-    top: 50px;
-    left: 50px;
+}
+
+#inky{
+    background: url(assets/pacman-art/ghosts/inky.png) no-repeat center;
+}
+
+#pinky{
+    background: url(assets/pacman-art/ghosts/pinky.png) no-repeat center;
 }
 
 .ghosts{

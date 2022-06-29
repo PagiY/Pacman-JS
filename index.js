@@ -1,18 +1,19 @@
 
 let w = [
-    [1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,0,0,0,0,0,0,1,0,0,0,1],
-    [1,0,0,0,0,0,0,1,0,0,0,1],
-    [1,0,0,0,0,0,0,1,0,0,0,1],
-    [1,0,0,0,2,0,0,1,1,1,0,1],
-    [1,0,0,0,2,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,3,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,0,0,0,0,0,0,0,0,0,0,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1]
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+    [1,2,2,1,2,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,2,2,1,2,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,2,1,1,3,2,2,1,2,2,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,2,2,2,1,1,5,1,1,2,2,2,2,2,2,2,1],
+    [1,2,2,2,1,4,4,4,1,2,2,2,2,2,2,2,1],
+    [1,2,2,2,1,4,4,4,1,2,2,2,2,2,2,2,1],
+    [1,2,2,2,1,1,1,1,1,2,2,2,2,2,2,2,1],
+    [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 
 ]
+
 
 let worlds = {
     1 : [
@@ -38,6 +39,52 @@ let worlds = {
 
 let world = w;
 
+
+let pacman = {
+    x: 1,
+    y: 1,
+    v: 1,
+}
+
+let ghosts = {
+    blinky : {
+        x: 1,
+        y: 1,
+        v: 1,
+        speed: 1000,        
+        state: 'normal',    
+        curDir: ''         
+    },
+    clyde : {
+        x: 1,
+        y: 1,
+        v: 1,
+        speed: 1000,
+        state: 'wait',
+        curDir: ''          
+    },
+    inky : {
+        x: 1,
+        y: 1,
+        v: 1,
+        speed: 1000,
+        state: 'out',
+        curDir: ''
+    },
+    pinky : {
+        x: 1,
+        y: 1,
+        v: 1,
+        speed: 1000,
+        state: 'wait',
+        curDir: ''
+    }
+}
+
+let directions = ['up', 'down', 'left', 'right'];
+let keyPressed = 'right';
+
+
 function displayWorld(){
 
     let output = "";
@@ -47,7 +94,8 @@ function displayWorld(){
         output += "<div class = 'row'>";
 
         for(let j = 0; j < world[i].length; j++){
-
+            
+            
             if(world[i][j] == 0){
                 output += "<div class = 'empty'></div>";
             }
@@ -60,22 +108,33 @@ function displayWorld(){
             else if(world[i][j] === 3){
                 output += "<div class = 'cherry'></div>";
             }
-            
+            else if(world[i][j] === 4){
+                output += "<div class = 'cage'></div>";
+            }
+            else if(world[i][j] === 5){
+                output += "<div class = 'gate'></div>";
+            }
         }
+        
         output += "</div>";
     }
+    
 
     document.getElementById('world').innerHTML = output;
-   //document.getElementById('container').innerHTML = output += "<div id = 'pacman' class = 'pacman'></div>"
 }
 
+//initializations function call
 displayWorld();
+initGhosts();
+initPacmanPosition();
 
-let keyPressed = 'right';
+
+//user keys and collision detection
 document.onkeydown = function(e){
 
     let checkX;
     let checkY;
+    let invalid_key = false;
 
     switch(e.keyCode){
         case 38:
@@ -94,12 +153,14 @@ document.onkeydown = function(e){
             checkY = pacman.y + pacman.v;
             checkX = pacman.x
             break;
+        default:
+            invalid_key = true;
+            console.log('Invalid key!')
         
     }
 
     
-    
-    if(checkCollision(checkX, checkY)){
+    if(checkCollision(checkX, checkY, true) && !invalid_key){   //if no collision, proceed
         switch(e.keyCode){
             case 38:
                 keyPressed = 'up';
@@ -118,64 +179,418 @@ document.onkeydown = function(e){
                 pacman.y += pacman.v;
                 break;
         }
-        displayPacman();
         displayWorld();
+        displayPacman();
     }
     
 
 }
 
-
-let pacman = {
-    x: 1,
-    y: 1,
-    v: 1,
-}
-
-
-function initPacman(){
-    let empties = document.getElementsByClassName("empty");
+//initialization functions
+function initPacmanPosition(){
+    let empties = document.getElementsByClassName("coin");
 
     let index = Math.floor(Math.random() * empties.length);
 
     let empty = empties[index].getBoundingClientRect()
 
-    startTop = empty.top;
-    startLeft = empty.left;
+    let x = empty.x / 20;
+    let y = empty.y / 20;
 
-    document.getElementById("pacman").style.left = empty.left + "px";
-    document.getElementById("pacman").style.top = empty.top + "px";
+    pacman.x = x;
+    pacman.y = y;
+
+    world[y][x] = 0;
+
+    displayWorld();
+    displayPacman();
+}
+
+function initGhosts(){
+    let ghs = document.getElementsByClassName("ghosts");
+    let empties = document.getElementsByClassName("coin");
+    let cages   = document.getElementsByClassName("cage");
+
+    let cage_counter = 0
+    for(let i = 0; i < ghs.length; i++){
+        
+        if(ghs[i].id === 'blinky'){
+            let index = Math.floor(Math.random() * empties.length);
+            let empty = empties[index].getBoundingClientRect()
+
+            let x = empty.x / 20;
+            let y = empty.y / 20;
+
+            ghosts.blinky.x = x;
+            ghosts.blinky.y = y;
+
+            ghs[i].style.left = (x * 20) + "px";
+            ghs[i].style.top = (y * 20) + "px";
+
+        }
+        else{
+            
+            //let index = Math.floor(Math.random() * cages.length);
+            let cage = cages[cage_counter].getBoundingClientRect();
+
+            let x = cage.x / 20;
+            let y = cage.y / 20;
+
+            ghs[i].style.left = (x * 20) + "px";
+            
+            if(ghs[i].id === "inky"){
+                ghosts.inky.x = x;
+                ghosts.inky.y = y ;
+                ghs[i].style.top  = (ghosts.inky.y * 20) + "px";
+                ghosts.inky.curDir = 'down';
+            }
+            else if(ghs[i].id === "pinky"){
+                ghosts.pinky.x = x;
+                ghosts.pinky.y = y;
+                ghs[i].style.top  = (ghosts.pinky.y * 20) + "px";
+                ghosts.pinky.curDir = 'up';
+            }
+            else if(ghs[i].id === "clyde"){
+                ghosts.clyde.x = x;
+                ghosts.clyde.y = y ;
+                ghs[i].style.top  = (ghosts.clyde.y * 20) + "px";
+                ghosts.clyde.curDir = 'up';
+            }
+            
+            cage_counter+=1;
+
+            displayWorld();
+        }
+        
+    }
+
+    //set initial direction for blinky
+    randomValidDirection(ghosts.blinky);
 
 }
+
 
 function displayPacman(){
-    //+ 50 for margin , could use better method
-    document.getElementById("pacman").style.left = (pacman.x * 20) + 50 + "px";
+    //+ 50 for margin , could use better method...
+    document.getElementById("pacman").style.left = (pacman.x * 20) + "px";
     document.getElementById("pacman").style.top = (pacman.y * 20) + "px";
  
-    document.getElementById("pacman").style.backgroundImage = "url(assets/pacman-" + keyPressed + ".gif)"
+    document.getElementById("pacman").style.backgroundImage = "url(assets/pacman-" + keyPressed + ".gif)";
 
 }
 
-function checkCollision(checkX, checkY){
+function displayGhost(ghost, name){
+    document.getElementById(name).style.left = (ghost.x * 20) + "px";
+    document.getElementById(name).style.top = (ghost.y * 20) + "px";
+    
+    if(ghost.state === "scared"){
+        document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/blue_ghost.png)";
+    }
+    else{
+        document.getElementById(name).style.backgroundImage = "url(assets/pacman-art/ghosts/" + name + ".png)";
+    }
 
-    if(world[checkY][checkX] === 0){
-       return true;
-    }
-    else if(world[checkY][checkX] === 1){
-       return false;
-    }
-    else if(world[checkY][checkX] === 2){
-        world[checkY][checkX] = 0
+}
+
+//collision check
+function checkCollision(checkX, checkY, isPacman){
+
+    if(world[checkY][checkX] === 0){        //if space
         return true;
     }
-    else if(world[checkY][checkX] === 3){
-        world[checkY][checkX] = 0
+    else if(world[checkY][checkX] === 1){   //if brick
+        return false;
+    }       
+    else if(world[checkY][checkX] === 2){   //if coin
+        if(isPacman){
+            world[checkY][checkX] = 0;
+        }
+        return true;
+    }
+    else if(world[checkY][checkX] === 3){   //if cherry
+        if(isPacman){
+            world[checkY][checkX] = 0;
+            scaredState(ghosts.blinky, true);
+            scaredState(ghosts.clyde, true);
+
+        }
         return true;
     }
     
+    
 }
 
-displayPacman();
+//ghost movements
+function moveGhost(ghost){
+    switch(ghost.curDir){
+        case 'up':
+            ghost.y -= ghost.v;
+            break;
+        case 'left':
+            ghost.x -= ghost.v;
+            break;
+        case 'right':
+            ghost.x += ghost.v;
+            break;
+        case 'down':
+            ghost.y += ghost.v;
+            break;
+    }
+}
+
+function randomValidDirection(ghost){
+    let hasDir = false;
+    //set initial direction for blinky
+    while(!hasDir){
+        //get random direction
+        let directions = ['up', 'down', 'left', 'right']
+        let index = Math.floor(Math.random() * directions.length);
+        
+        let checkX;
+        let checkY;
 
 
+        //check random directions' coordinates
+        switch(directions[index]){
+            case 'up':
+                checkY = ghost.y - ghost.v;
+                checkX = ghost.x
+                break;
+            case 'left':
+                checkY = ghost.y;
+                checkX = ghost.x - ghost.v
+                break;
+            case 'right':
+                checkY = ghost.y;
+                checkX = ghost.x + ghost.v; 
+                break;
+            case 'down':
+                checkY = ghost.y + ghost.v;
+                checkX = ghost.x;
+                break;
+        
+        }
+
+        if(checkCollision(checkX, checkY, false)){
+            ghost.curDir = directions[index];
+            hasDir = true;
+        }
+    }
+}
+
+//enemy states 
+function normalState(ghost){
+    
+    //scan  
+    let checkX;
+    let checkY;
+    
+    switch(ghost.curDir){
+        case 'up':
+            checkY = ghost.y - ghost.v;
+            checkX = ghost.x
+            break;
+        case 'left':
+            checkY = ghost.y;
+            checkX = ghost.x - ghost.v
+            break;
+        case 'right':
+            checkY = ghost.y;
+            checkX = ghost.x + ghost.v; 
+            break;
+        case 'down':
+            checkY = ghost.y + ghost.v;
+            checkX = ghost.x
+            break;
+        
+    }
+    
+    if(checkCollision(checkX, checkY, false)){
+        moveGhost(ghost);
+    }
+    else{
+        
+        let newDir = [];
+        for(let i = 0; i < directions.length; i++){
+            if(directions[i] === ghost.curDir){
+                continue;
+            }
+            else{
+                newDir.push(directions[i]);
+            }
+        }
+        //let directions = ['up', 'down', 'left', 'right']
+        let index = Math.floor(Math.random() * newDir.length);
+        
+        ghost.curDir = newDir[index];
+    
+    }
+}
+
+function chaseState(){
+    //TODO: follow pacman?? A*??
+}
+
+function scaredState(ghost, transitioning){
+    //TODO: reverse direction and slow down movement while in this state
+
+    if(transitioning){
+
+        if(ghost.curDir === 'up'){
+            //check reverse direction if passable
+            let checkX = ghost.x;
+            let checkY = ghost.y + 1;
+            if(checkCollision(checkX, checkY, false)){
+                ghost.curDir = 'down';
+                moveGhost(ghost);
+            }
+        }
+        else if(ghost.curDir === 'down'){
+            //check reverse direction if passable
+            let checkX = ghost.x;
+            let checkY = ghost.y - 1;
+            if(checkCollision(checkX, checkY, false)){
+                ghost.curDir = 'up';
+                moveGhost(ghost);
+            }
+        }
+        else if(ghost.curDir === 'right'){
+            //check reverse direction if passable
+            let checkX = ghost.x - 1;
+            let checkY = ghost.y;
+            if(checkCollision(checkX, checkY, false)){
+                ghost.curDir = 'left';
+                moveGhost(ghost);
+            }
+        }
+        else if(ghost.curDir === 'left'){
+            //check reverse direction if passable
+            let checkX = ghost.x + 1;
+            let checkY = ghost.y;
+            if(checkCollision(checkX, checkY, false)){
+                ghost.curDir = 'right';
+                moveGhost(ghost);
+            }
+        }
+        else{
+            //if all else fails, choose random direction
+            randomValidDirection(ghost);
+        }
+          
+    }
+    else{
+        
+        normalState(ghost);
+    }
+    ghost.state = "scared";
+
+}
+
+function returnState(){
+    //TODO: A* pathfinding
+}
+
+function waitState(ghost){
+    if(ghost.curDir === 'down'){
+        ghost.curDir = 'up';
+    }
+    else if(ghost.curDir === 'up'){
+        ghost.curDir = 'down';
+    }
+    moveGhost(ghost)
+}   
+
+function moveOutState(ghost){
+    console.log()
+}
+
+//enemy states controllers
+function moveBlinky(){
+    
+    if(ghosts.blinky.state === 'normal'){
+        ghosts.blinky.speed = 500;
+        normalState(ghosts.blinky);
+    }
+    else if(ghosts.blinky.state === 'scared'){
+        ghosts.blinky.speed = 2000;
+        scaredState(ghosts.blinky, false);
+        
+    }
+
+    displayGhost(ghosts.blinky, "blinky");
+}
+
+function moveClyde(){
+    if(ghosts.clyde.state === 'normal'){
+        ghosts.clyde.speed = 500;
+        normalState(ghosts.clyde);
+    }
+    else if(ghosts.clyde.state === 'wait'){
+        ghosts.clyde.speed = 500;   //speed when in wait state
+        waitState(ghosts.clyde);
+    }
+    else if(ghosts.blinky.state === 'scared'){
+        ghosts.clyde.speed = 2000;
+        scaredState(ghosts.clyde, false);
+    }
+    displayGhost(ghosts.clyde, "clyde");
+    
+}
+
+function moveInky(){
+    if(ghosts.inky.state === 'normal'){
+        ghosts.clyde.speed = 500;
+        normalState(ghosts.inky);
+    }
+    else if(ghosts.inky.state === 'wait'){
+        ghosts.clyde.speed = 500;
+        waitState(ghosts.inky);
+    }
+    else if(ghosts.inky.state === 'out'){
+
+        //ghosts.inky.y -= 1;
+        // let cages = document.getElementsByClassName("cage");
+        //  for(let i = 0; i < cages.length; i++){
+            
+        //     let cage = cages[i].getBoundingClientRect();
+        //     let cageX = cage.x / 20;
+        //     let cageY = cage.y / 20;
+
+        //     if(cageX === ghosts.inky.x && cageY === ghosts.inky.y){
+        //         if(cageX < )
+        //     }
+        //  }
+        
+    }
+
+    displayGhost(ghosts.inky, "inky");
+
+}
+
+function movePinky(){
+    if(ghosts.pinky.state === 'normal'){
+        ghosts.clyde.speed = 500;
+        normalState(ghosts.pinky);
+    }
+    else if(ghosts.pinky.state === 'wait'){
+        ghosts.clyde.speed = 500;
+        waitState(ghosts.pinky);
+    }
+    displayGhost(ghosts.pinky, "pinky");
+
+}
+
+
+
+function intervalController(){
+    setInterval(moveBlinky, ghosts.blinky.speed);
+    setInterval(moveClyde,  ghosts.clyde.speed);
+    setInterval(moveInky,   ghosts.inky.speed);
+    setInterval(movePinky,  ghosts.pinky.speed);
+
+    setInterval(function() {
+        
+    }, 10000)
+}
+
+intervalController();
