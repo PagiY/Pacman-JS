@@ -18,7 +18,11 @@ let w = [
 let worlds = {
     1 : [
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1]
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,3,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,2,2,1],
         [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     ],
 
@@ -39,7 +43,7 @@ let worlds = {
     ]
 }
 
-let world = w;
+let world = worlds[1];
 
 let score = 0;
 
@@ -261,7 +265,7 @@ function initGhosts(){
         
         if(ghs[i].id === 'blinky'){
             let index = Math.floor(Math.random() * empties.length);
-            let empty = empties[index].getBoundingClientRect()
+            let empty = empties[index].getBoundingClientRect();
 
             let x = empty.x / 20;
             let y = empty.y / 20;
@@ -274,35 +278,87 @@ function initGhosts(){
 
         }
         else{
-            
-            //let index = Math.floor(Math.random() * cages.length);
-            let cage = cages[cage_counter].getBoundingClientRect();
+            if(cages.length!==0){
+                //let index = Math.floor(Math.random() * cages.length);
+                let cage = cages[cage_counter].getBoundingClientRect();
 
-            let x = cage.x / 20;
-            let y = cage.y / 20;
+                let x = cage.x / 20;
+                let y = cage.y / 20;
 
-            ghs[i].style.left = (x * 20) + "px";
+                ghs[i].style.left = (x * 20) + "px";
+                
+                if(ghs[i].id === "inky"){
+                    ghosts.inky.x = x;
+                    ghosts.inky.y = y + 1;
+                    ghs[i].style.top  = (ghosts.inky.y * 20) + "px";
+                    ghosts.inky.curDir = 'down';
+                }
+                else if(ghs[i].id === "pinky"){
+                    ghosts.pinky.x = x;
+                    ghosts.pinky.y = y;
+                    ghs[i].style.top  = (ghosts.pinky.y * 20) + "px";
+                    ghosts.pinky.curDir = 'up';
+                }
+                else if(ghs[i].id === "clyde"){
+                    ghosts.clyde.x = x;
+                    ghosts.clyde.y = y ;
+                    ghs[i].style.top  = (ghosts.clyde.y * 20) + "px";
+                    ghosts.clyde.curDir = 'up';
+                }
+                
+                cage_counter+=1;
+            }
+            else{
+                if(ghs[i].id === 'clyde'){
+                    let index = Math.floor(Math.random() * empties.length);
+                    let empty = empties[index].getBoundingClientRect();
+
+                    let x = empty.x / 20;
+                    let y = empty.y / 20;
+
+                    ghosts.clyde.x = x;
+                    ghosts.clyde.y = y;
+                    ghosts.clyde.state = "normal";
+                    
+                    randomValidDirection(ghosts.clyde);
+
+                    ghs[i].style.left = (x * 20) + "px";
+                    ghs[i].style.top = (y * 20) + "px";
+                }
+                else if(ghs[i].id === 'inky'){
+                    let index = Math.floor(Math.random() * empties.length);
+                    let empty = empties[index].getBoundingClientRect();
+
+                    let x = empty.x / 20;
+                    let y = empty.y / 20;
+
+                    ghosts.inky.x = x;
+                    ghosts.inky.y = y;
+                    ghosts.inky.state = "normal";
+
+                    randomValidDirection(ghosts.inky);
+
+                    ghs[i].style.left = (x * 20) + "px";
+                    ghs[i].style.top = (y * 20) + "px";
+                }
+                else if(ghs[i].id === 'pinky'){
+                    let index = Math.floor(Math.random() * empties.length);
+                    let empty = empties[index].getBoundingClientRect();
+
+                    let x = empty.x / 20;
+                    let y = empty.y / 20;
+
+                    ghosts.pinky.x = x;
+                    ghosts.pinky.y = y;
+                    ghosts.pinky.state = "normal";
+
+                    randomValidDirection(ghosts.pinky);
+
+                    ghs[i].style.left = (x * 20) + "px";
+                    ghs[i].style.top = (y * 20) + "px";
+                }
+            }
             
-            if(ghs[i].id === "inky"){
-                ghosts.inky.x = x;
-                ghosts.inky.y = y + 1;
-                ghs[i].style.top  = (ghosts.inky.y * 20) + "px";
-                ghosts.inky.curDir = 'down';
-            }
-            else if(ghs[i].id === "pinky"){
-                ghosts.pinky.x = x;
-                ghosts.pinky.y = y;
-                ghs[i].style.top  = (ghosts.pinky.y * 20) + "px";
-                ghosts.pinky.curDir = 'up';
-            }
-            else if(ghs[i].id === "clyde"){
-                ghosts.clyde.x = x;
-                ghosts.clyde.y = y ;
-                ghs[i].style.top  = (ghosts.clyde.y * 20) + "px";
-                ghosts.clyde.curDir = 'up';
-            }
-            
-            cage_counter+=1;
             
         }
         
