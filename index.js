@@ -58,7 +58,19 @@ let worlds = {
     ],
 
     3 : [
-        []
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,1,2,1,2,1,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1],
+        [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
     ],
 
     4 : [
@@ -70,7 +82,7 @@ let worlds = {
     ]
 }
 
-let world = worlds[2];
+let world = worlds[3];
 
 let score = 0;
 
@@ -164,6 +176,10 @@ function displayWorld(){
     
     document.getElementById('world').innerHTML = output;
 
+}
+
+function randomIntGenerator(len){
+    return Math.floor(Math.random() * len);
 }
 
 //==== Score display UI
@@ -266,7 +282,7 @@ document.onkeydown = function(e){
 function initPacmanPosition(){
     let empties = document.getElementsByClassName("coin");
 
-    let index = Math.floor(Math.random() * empties.length);
+    let index = randomIntGenerator(empties.length);
 
     let empty = empties[index].getBoundingClientRect()
 
@@ -291,7 +307,7 @@ function initGhosts(){
     for(let i = 0; i < ghs.length; i++){
         
         if(ghs[i].id === 'blinky'){
-            let index = Math.floor(Math.random() * empties.length);
+            let index = randomIntGenerator(empties.length); 
             let empty = empties[index].getBoundingClientRect();
 
             let x = empty.x / 20;
@@ -306,7 +322,7 @@ function initGhosts(){
         }
         else{
             if(cages.length!==0){
-                //let index = Math.floor(Math.random() * cages.length);
+                
                 let cage = cages[cage_counter].getBoundingClientRect();
 
                 let x = cage.x / 20;
@@ -336,8 +352,9 @@ function initGhosts(){
                 cage_counter+=1;
             }
             else{
+                let index = randomIntGenerator(empties.length)
                 if(ghs[i].id === 'clyde'){
-                    let index = Math.floor(Math.random() * empties.length);
+                  
                     let empty = empties[index].getBoundingClientRect();
 
                     let x = empty.x / 20;
@@ -353,7 +370,7 @@ function initGhosts(){
                     ghs[i].style.top = (y * 20) + "px";
                 }
                 else if(ghs[i].id === 'inky'){
-                    let index = Math.floor(Math.random() * empties.length);
+                   
                     let empty = empties[index].getBoundingClientRect();
 
                     let x = empty.x / 20;
@@ -369,7 +386,6 @@ function initGhosts(){
                     ghs[i].style.top = (y * 20) + "px";
                 }
                 else if(ghs[i].id === 'pinky'){
-                    let index = Math.floor(Math.random() * empties.length);
                     let empty = empties[index].getBoundingClientRect();
 
                     let x = empty.x / 20;
@@ -471,7 +487,7 @@ function randomValidDirection(ghost){
     while(!hasDir){
         //get random direction
         let directions = ['up', 'down', 'left', 'right']
-        let index = Math.floor(Math.random() * directions.length);
+        let index = randomIntGenerator(directions.length) //Math.floor(Math.random() * directions.length);
         
         let checkX;
         let checkY;
@@ -533,7 +549,7 @@ function triggerScaredStatus(){
 function normalState(ghost){
     
     let chance = [0,1,3];
-    let ch = Math.floor(Math.random() * chance.length);
+    let ch = randomIntGenerator(chance.length); //Math.floor(Math.random() * chance.length);
 
     if(ch===1){
         randomValidDirection(ghost);
@@ -578,7 +594,7 @@ function normalState(ghost){
             }
         }
         //let directions = ['up', 'down', 'left', 'right']
-        let index = Math.floor(Math.random() * newDir.length);
+        let index = randomIntGenerator(newDir.length); //Math.floor(Math.random() * newDir.length);
         
         ghost.curDir = newDir[index];
     
