@@ -1,2 +1,9 @@
 # Pacman-JS
-Pacman game using pure HTML, CSS, and Javascript (BONUS: Canvas implementation)
+Simple Pacman game using pure HTML, CSS, and Javascript
+
+(Canvas implementation found in canvas-implementation folder)
+
+
+## Controls
+
+## Mechanics
