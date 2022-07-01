@@ -24,12 +24,14 @@ right - move pacman 1 block right
 
 ![dot](assets/pacman-art/other/dot.png) 
 
-A dot is one point
+A dot is **1 point**.
 
 ![apple](assets/pacman-art/other/apple.png)
 ![scared](assets/pacman-art/ghosts/blue_ghost.png)
 
-Eating an apple makes the ghosts scared. Worth 20 points
+Eating an apple makes the ghosts scared. Worth **20 points**.
 
+![scared](assets/pacman-art/ghosts/blue_ghost.png)
 
+Scared ghosts can be eaten. Eaten scared ghosts is worth **200 points**. 
 
