@@ -35,3 +35,6 @@ Eating an apple makes the ghosts scared. Worth **20 points**.
 
 Scared ghosts can be eaten. Eaten scared ghosts is worth **200 points**. 
 
+## GOAL
+
+Eat all the dots to without getting eaten by the ghosts!
