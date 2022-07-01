@@ -31,5 +31,9 @@ A dot is one point
 
 Eating an apple makes the ghosts scared. Worth 20 points
 
+![scared](assets/pacman-art/ghosts/blue_ghost.png)
+
+Scared ghosts can be eaten. Eaten scared ghosts is worth 200 points. 
+Score multiplier x2 if pacman eats ghosts continuously during the whole scared state of the ghosts.
 
 
