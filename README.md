@@ -1,6 +1,6 @@
 # Pacman-JS
 Simple Pacman game using pure HTML, CSS, and Javascript
-(Canvas implementation found in canvas-implementation folder)
+(Canvas implementation found in canvas-ver folder)
 
 ![game-screenshot](assets/screenshots/game.png)
 
