@@ -6,12 +6,12 @@ Simple Pacman game using pure HTML, CSS, and Javascript
 
 ---
 Todo:
-- [] Code refactor
-- [] Add ghosts AI
-- [] Fix portal
-- [] Add more levels
-- [] Add Audio
-- [] Add better UI
+- [ ] Code refactor
+- [ ] Add ghosts AI
+- [ ] Fix portal
+- [ ] Add more levels
+- [ ] Add Audio
+- [ ] Add better UI
 ---
 
 ## Controls
