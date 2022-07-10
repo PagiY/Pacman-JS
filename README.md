@@ -1,9 +1,17 @@
-# Pacman-JS
+# Pacman-JS 
 Simple Pacman game using pure HTML, CSS, and Javascript
 (Canvas implementation found in canvas-ver folder)
 
 ![game-screenshot](assets/screenshots/game.png)
 
+---
+Todo:
+- [] Code refactor
+- [] Add ghosts AI
+- [] Fix portal
+- [] Add more levels
+- [] Add Audio
+- [] Add better UI
 ---
 
 ## Controls
